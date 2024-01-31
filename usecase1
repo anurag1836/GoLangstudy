@@ -1,0 +1,104 @@
+// Use case 1 : NSP Product Family Map
+// *******************************
+// Create a  Map for Product family : "key being family name","values being list of node types"
+
+// for eg : SR family : 7750,7450,7950
+
+// tasks to perform :
+
+// 1. Print family -> nodes
+// 2. Add new Family
+// 3. Check if a family contains a node and add if it doesn't (eg if 7250 is present SR or not )
+// 4. Delete if a node is depricated
+
+package main
+
+import (
+	"fmt"
+)
+
+// Define a map for product family and corresponding node types
+var productFamilyMap = map[string][]string{
+	"SR":      {"7750", "7450", "7950"},
+	"IP Edge": {"7210", "7705"},
+}
+
+// Function to print family and corresponding nodes
+func printFamilyNodes() {
+	for family, nodes := range productFamilyMap {
+		fmt.Printf("Family: %s, Nodes: %v\n", family, nodes)
+	}
+}
+
+// Function to add a new family
+func addFamily(familyName string, nodeList []string) {
+	if _, exists := productFamilyMap[familyName]; !exists {
+		productFamilyMap[familyName] = nodeList
+		fmt.Printf("Family '%s' added successfully!\n", familyName)
+	} else {
+		fmt.Printf("Family '%s' already exists!\n", familyName)
+	}
+}
+
+// Function to check if a family contains a node and add if it doesn't
+func checkAndAddNode(familyName string, node string) {
+	if nodes, exists := productFamilyMap[familyName]; exists {
+		if !contains(nodes, node) {
+			productFamilyMap[familyName] = append(nodes, node)
+			fmt.Printf("Node '%s' added to family '%s'!\n", node, familyName)
+		} else {
+			fmt.Printf("Node '%s' already exists in family '%s'!\n", node, familyName)
+		}
+	} else {
+		fmt.Printf("Family '%s' does not exist!\n", familyName)
+	}
+}
+
+// Function to delete a node if it is deprecated
+func deleteNode(familyName string, node string) {
+	if nodes, exists := productFamilyMap[familyName]; exists {
+		for i, existingNode := range nodes {
+			if existingNode == node {
+				nodes = append(nodes[:i], nodes[i+1:]...)
+				productFamilyMap[familyName] = nodes
+				fmt.Printf("Node '%s' deleted from family '%s'!\n", node, familyName)
+				return
+			}
+		}
+		fmt.Printf("Node '%s' does not exist in family '%s'!\n", node, familyName)
+	} else {
+		fmt.Printf("Family '%s' does not exist!\n", familyName)
+	}
+}
+
+// Function to print family and corresponding nodes
+func printFinalFamilyNodes() {
+	for family, nodes := range productFamilyMap {
+		fmt.Printf("Final Family: %s, Nodes: %v\n", family, nodes)
+	}
+}
+
+// Helper function to check if a slice contains a value
+func contains(slice []string, value string) bool {
+	for _, v := range slice {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
+
+func main() {
+	printFamilyNodes()
+
+	addFamily("IXR", []string{"7250_IXR6", "7250_IXR10"})
+	printFamilyNodes()
+
+	checkAndAddNode("SR", "7250")
+	checkAndAddNode("SR", "7750") // Node already exists
+
+	deleteNode("SR", "7450")
+	deleteNode("MG", "7750-MG") // Family doesn't exist
+
+	printFinalFamilyNodes()
+}
