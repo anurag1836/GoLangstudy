@@ -1,0 +1,71 @@
+package main
+
+import (
+	"fmt"
+)
+
+// OrganizingTeam represents the team responsible for organizing the event.
+type OrganizingTeam struct {
+	TeamMembers        []string
+	PrimaryContactName string 
+}
+
+// NSPEvent represents an event with information such as date, name, and primary contact.
+type NSPEvent struct {
+	EventDate      string // Representing the date as a string
+	EventName      string
+	PrimaryContact string         
+	OrganizingTeam OrganizingTeam 
+}
+
+func main() {
+	// Example usage
+	organizingTeam := OrganizingTeam{
+		TeamMembers:        []string{"anurag", "anuj", "amit", "anita"},
+		PrimaryContactName: "anita",
+	}
+
+	nspEvent := NSPEvent{
+		EventDate:      "2024-23-01", 
+		EventName:      "NSP Makarsakranti",
+		PrimaryContact: "Sowjanya",
+		OrganizingTeam: organizingTeam,
+	}
+
+	// Accessing fields
+	fmt.Println("Event Name:", nspEvent.EventName)
+	fmt.Println("Event Date:", nspEvent.EventDate)
+	fmt.Println("Primary Contact (Event):", nspEvent.PrimaryContact)
+
+	fmt.Println("\nOrganizing Team:")
+	fmt.Println("Team Members:", nspEvent.OrganizingTeam.TeamMembers)
+	fmt.Println("Primary Contact (Organizing Team):", nspEvent.OrganizingTeam.PrimaryContactName)
+
+	// Add a team member
+	addTeamMember(&nspEvent.OrganizingTeam, "Shruti")
+
+	// Remove a team member
+	removeTeamMember(&nspEvent.OrganizingTeam, "anurag")
+
+	// Print the updated team members
+	fmt.Println("\nUpdated Organizing Team:")
+	fmt.Println("Team Members:", nspEvent.OrganizingTeam.TeamMembers)
+}
+
+// Function to add a new team member
+func addTeamMember(team *OrganizingTeam, newMember string) {
+	team.TeamMembers = append(team.TeamMembers, newMember)
+}
+
+// Function to remove a team member
+func removeTeamMember(team *OrganizingTeam, memberToRemove string) {
+	for i, member := range team.TeamMembers {
+		if member == memberToRemove {
+			// Remove the team member
+			team.TeamMembers = append(team.TeamMembers[:i], team.TeamMembers[i+1:]...)
+			fmt.Printf("Removed %v from the team members\n", memberToRemove)
+			return
+		}
+	}
+	fmt.Printf("%v not found in the team members\n", memberToRemove)
+}
